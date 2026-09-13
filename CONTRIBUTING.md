@@ -85,15 +85,14 @@ foo( void )
 /* sign_bytes signs bytes with the provided private_key using ed25519.
    The generated signature is then written into the provided signature buffer */
 int
-sign_bytes(
-          uchar  signature[64],
-    const uchar  private_key[64],
-    const uchar* byte_ptr,
-    const ulong  byte_len );
+sign_bytes( uchar        signature[64],
+            const uchar  private_key[64],
+            const uchar* byte_ptr,
+            const ulong  byte_len );
 ```
 
 # 4. AI generated code
-AI generated code shall **only** be included in non-production environments for debugging purposes (e.g. pretty-printing complex structures). Such sections must be marked.
+AI generated code shall **only** be included in non-production environments for debugging purposes (e.g. pretty-printing complex structures). Such sections must be marked. If you used generative AI to generate code you must fully understand every single line of it.
 ```c
 /* _!_ AI code <reason> _!_ */
 ...
