@@ -1,8 +1,13 @@
 CXX = gcc
 CXX_FLAGS = -MMD -MP -Wall -Wextra
 
-# CXX_FLAGS += -g -fsanitize=address -O0
-# CXX_FLAGS += -fno-omit-frame-pointer
+CXX_FLAGS += -g -fsanitize=address -O0
+CXX_FLAGS += -fno-omit-frame-pointer
+
+CXX_FLAGS += -DDEBUG
+CXX_FLAGS += -DVERBOSE
+# CXX_FLAGS += -DNO_WARN
+# CXX_FLAGS += -DNO_COLOR
 
 EXEC_BIN = CHANGE_MY_NAME
 
