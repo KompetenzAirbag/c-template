@@ -4,8 +4,10 @@
 #define LIKELY( cond )   __builtin_expect( !!(cond), 1L )
 #define UNLIKELY( cond ) __builtin_expect( !!(cond), 0L )
 
-#define ENSURE( cond, message, ... )     if( !(cond) ) { LOG_WARN( (message), ##__VA_ARGS__ ); }
-#define ENSURE_ERR( cond, message, ... ) if( !(cond) ) { LOG_ERROR( (message), ##__VA_ARGS__ ); }
+/* ENSURE works similar to assert but uses the logging system */
+#define ENSURE( cond, message, ... )     if( UNLIKELY( !(cond) ) ) { LOG_WARN( (message), ##__VA_ARGS__ ); }
+/* ENSURE_ERR works the same as assert and uses the logging system */
+#define ENSURE_ERR( cond, message, ... ) if( UNLIKELY( !(cond) ) ) { LOG_ERROR( (message), ##__VA_ARGS__ ); }
 
 /* ATTRIBUTES */
 #define __check_return __attribute__((__warn_unused_result__))
