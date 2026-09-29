@@ -1,4 +1,5 @@
 #include "log.h"
+#include "gen_types.h"
 
 #include <time.h>
 #include <string.h>

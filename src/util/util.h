@@ -1,5 +1,9 @@
 #pragma once
 
+#include "log.h"
+
+#include <stddef.h>
+
 /* USE WITH CAUTION */
 #define LIKELY( cond )   __builtin_expect( !!(cond), 1L )
 #define UNLIKELY( cond ) __builtin_expect( !!(cond), 0L )
@@ -8,6 +12,8 @@
 #define ENSURE( cond, message, ... )     if( UNLIKELY( !(cond) ) ) { LOG_WARN( (message), ##__VA_ARGS__ ); }
 /* ENSURE_ERR works the same as assert and uses the logging system */
 #define ENSURE_ERR( cond, message, ... ) if( UNLIKELY( !(cond) ) ) { LOG_ERROR( (message), ##__VA_ARGS__ ); }
+/* ENSURE_NON_NULL is a wrapper for ENSURE_ERR for checking nullptr */
+#define ENSURE_NON_NULL( ptr, message, ... ) ENSURE_ERR( ptr, message, ##__VA_ARGS__ )
 
 /* ATTRIBUTES */
 #define __check_return __attribute__((__warn_unused_result__))
