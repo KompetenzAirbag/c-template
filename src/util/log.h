@@ -45,14 +45,16 @@
 /* AN_WARN("%d is the loneliest number", 1) will print something like:
      [WARN] 09-02-2026 22:15:23.26 src/file.c(102): 1 is the loneliest number
 */
+#define LOG_INFO( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 0, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); } while( 0 )
+
 #ifdef DEBUG
-#define LOG_DEBUG( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 0, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_DEBUG( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 1, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); } while( 0 )
 #else
 #define LOG_DEBUG( fmt, ... ) do {} while( 0 )
 #endif /* DEBUG */
 
 #ifdef VERBOSE
-#define LOG_VERBOSE( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 1, "", 0, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_VERBOSE( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 2, "", 0, fmt, ##__VA_ARGS__ ); } while( 0 )
 #else
 #define LOG_VERBOSE( fmt, ... ) do {} while( 0 )
 #endif /* VERBOSE */
@@ -60,7 +62,7 @@
 #ifdef NO_WARN
 #define LOG_WARN( fmt, ... ) do {} while( 0 )
 #else
-#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 2, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
+#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), 3, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
 #endif /* NO_WARN */
 
 #define LOG_ERROR( fmt, ... ) do { log_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__ ); } while( 0 )

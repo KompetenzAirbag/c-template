@@ -64,6 +64,7 @@ log_variadic( FILE*       file_ptr,
     log_wallclock_cstr( get_millis(), now_cstr );
 
     static const char* const prefixes[] = {
+        ANSI_COLOR_GREEN  "[INFO]   " ANSI_COLOR_RESET
         ANSI_COLOR_CYAN   "[DEBUG]  " ANSI_COLOR_RESET,
         ANSI_COLOR_BLUE   "[VERBOSE]" ANSI_COLOR_RESET,
         ANSI_COLOR_YELLOW "[WARN]   " ANSI_COLOR_RESET,
@@ -124,7 +125,7 @@ log_err( FILE*       file_ptr,
     va_list args;
     va_start( args, message_fmt );
 
-    log_variadic( file_ptr, close_file, 3, file, line, func, message_fmt, args );
+    log_variadic( file_ptr, close_file, 4, file, line, func, message_fmt, args );
 
     va_end( args );
 
