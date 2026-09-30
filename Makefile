@@ -1,13 +1,16 @@
-CXX = gcc
-CXX_FLAGS = -MMD -MP -Wall -Wextra
+CC = gcc
+C_FLAGS = -MMD -MP -Wall -Wextra
 
-CXX_FLAGS += -g -fsanitize=address -O0
-CXX_FLAGS += -fno-omit-frame-pointer
+.DEFAULT_GOAL := all
 
-CXX_FLAGS += -DDEBUG
-CXX_FLAGS += -DVERBOSE
-# CXX_FLAGS += -DNO_WARN
-# CXX_FLAGS += -DNO_COLOR
+# C_FLAGS += -DNO_WARN
+# C_FLAGS += -DNO_COLOR
+
+DEBUG_FLAGS = -g -fsanitize=address -O0 -fno-omit-frame-pointer
+DEBUG_FLAGS += -DDEBUG
+DEBUG_FLAGS += -DVERBOSE
+
+RELEASE_FLAGS = -O2
 
 EXEC_BIN = CHANGE_MY_NAME
 
@@ -39,49 +42,69 @@ SRC := $(filter-out src/main.c, $(shell find src -type f -name '*.c'))
 MAIN_SRC := src/main.c
 
 #####################
-#					#
-#	   OBJECTS		#
-#					#
+#                   #
+#      DEBUG        #
+#                   #
 #####################
 
-OBJ 	 := $(patsubst src/%.c,  $(BUILD_DIR)/%.o, $(SRC))
-MAIN_OBJ := $(patsubst src/%.c,  $(BUILD_DIR)/%.o, $(MAIN_SRC))
+DEBUG_DIR = $(BUILD_DIR)/debug
 
-#####################
-#					#
-#	OBJECT RULES	#
-#					#
-#####################
+DEBUG_OBJ := $(patsubst src/%.c,$(DEBUG_DIR)/%.o,$(SRC))
+DEBUG_MAIN_OBJ := $(patsubst src/%.c,$(DEBUG_DIR)/%.o,$(MAIN_SRC))
 
-$(EXEC_BIN): $(OBJ) $(MAIN_OBJ)
-	@$(CXX) -o $@ $^ $(LIBS) $(CXX_FLAGS) $(LD_FLAGS)
+debug: $(DEBUG_OBJ) $(DEBUG_MAIN_OBJ)
+	@$(CC) -o $(EXEC_BIN) $^ $(DEBUG_FLAGS) $(LD_FLAGS)
 
-#####################
-#					#
-#	  COMPILING		#
-#					#
-#####################
-
-$(BUILD_DIR)/%.o: src/%.c
+$(DEBUG_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXX_FLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(C_FLAGS) $(DEBUG_FLAGS) $(INCLUDES) -c $< -o $@
+
+#####################
+#                   #
+#      RELEASE      #
+#                   #
+#####################
+
+RELEASE_DIR = $(BUILD_DIR)/release
+
+RELEASE_OBJ := $(patsubst src/%.c,$(RELEASE_DIR)/%.o,$(SRC))
+RELEASE_MAIN_OBJ := $(patsubst src/%.c,$(RELEASE_DIR)/%.o,$(MAIN_SRC))
+
+release: $(RELEASE_OBJ) $(RELEASE_MAIN_OBJ)
+	@$(CC) -o $(EXEC_BIN) $^ $(RELEASE_FLAGS) $(LD_FLAGS)
+
+$(RELEASE_DIR)/%.o: src/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(C_FLAGS) $(RELEASE_FLAGS) $(INCLUDES) -c $< -o $@
 
 #####################
 #					#
-#	EXECUTE RULES	#
+#	   TARGETS     	#
 #					#
 #####################
 
-all: $(EXEC_BIN)
+all: release
 
-run: $(EXEC_BIN)
+run: release
+	./$(EXEC_BIN)
+
+run-debug: debug
 	./$(EXEC_BIN)
 
 clean:
 	rm -rf $(BUILD_DIR) $(EXEC_BIN)
 
-.PHONY: all run clean
+clean-debug:
+	rm -rf $(DEBUG_DIR) $(EXEC_BIN)
+
+clean-release:
+	rm -rf $(RELEASE_DIR) $(EXEC_BIN)
+
+.PHONY: all debug release run run-debug clean clean-debug clean-release
 
 # This makes header changes recompile
--include $(OBJ:.o=.d)
--include $(TEST_OBJ:.o=.d)
+-include $(DEBUG_OBJ:.o=.d)
+-include $(DEBUG_MAIN_OBJ:.o=.d)
+
+-include $(RELEASE_OBJ:.o=.d)
+-include $(RELEASE_MAIN_OBJ:.o=.d)
