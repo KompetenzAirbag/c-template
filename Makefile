@@ -100,7 +100,16 @@ clean-debug:
 clean-release:
 	rm -rf $(RELEASE_DIR) $(EXEC_BIN)
 
-.PHONY: all debug release run run-debug clean clean-debug clean-release
+clean-tests:
+	$(MAKE) -C tests clean -s
+
+tests:
+	$(MAKE) -C tests -s
+
+run-tests:
+	$(MAKE) -C tests run-tests -s
+
+.PHONY: all debug release run run-debug clean clean-debug clean-release clean-tests tests run-tests
 
 # This makes header changes recompile
 -include $(DEBUG_OBJ:.o=.d)
