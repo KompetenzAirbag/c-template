@@ -37,7 +37,7 @@ log_variadic( FILE*       file_ptr,
         file_ptr = stdout;
         close_file = 0;
         log_variadic( file_ptr, close_file, LOG_LEVEL_ERROR, NULL, 0, NULL, "Failed to open log file", NULL );
-        abort();
+        exit(1);
     }
 
     char now_cstr[AN_LOG_WALLCLOCK_CSTR_BUF_SZ];
@@ -111,5 +111,5 @@ log_err( FILE*       file_ptr,
 
     fflush( file_ptr );
 
-    abort();
+    exit(1);
 }
