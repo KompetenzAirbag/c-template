@@ -6,14 +6,12 @@ The name of the executable is defined in the first line and should be changed.
 
 The included Makefile includes several targets:
 <pre class="notranslate" lang="{bash}">
-<code>
-release - default, O2 optimization and no debug flags
+<code>release - default, O2 optimization and no debug flags
 debug - forces O0 optimization and sets -DDEBUG -DVERBOSE as well as address san
 
 clean, clean-debug, clean-release, clean-tests - their respective cleaning operations
 
-tests - builds automatically detected tests (see <a href="https://github.com/KompetenzAirbag/c-template#Unit-Testing">Unit Testing</a> below)
-</code>
+tests - builds automatically detected tests (see <a href="https://github.com/KompetenzAirbag/c-template#Unit-Testing">Unit Testing</a> below)</code>
 </pre>
 All targets have their respective `run` operations as well to run the executable afterwards.
 
