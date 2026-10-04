@@ -46,7 +46,7 @@ log_wallclock_cstr( long now, char* buf )
 void
 log_variadic( FILE*       file_ptr,
               int         close_file,
-              uint        level,
+              LOG_LEVEL   level,
               const char* file,
               int         line,
               const char* func,
@@ -56,7 +56,7 @@ log_variadic( FILE*       file_ptr,
     if( file_ptr == NULL ) {
         file_ptr = stdout;
         close_file = 0;
-        log_variadic( file_ptr, close_file, 3, NULL, 0, NULL, "Failed to open log file", NULL );
+        log_variadic( file_ptr, close_file, LOG_LEVEL_ERROR, NULL, 0, NULL, "Failed to open log file", NULL );
         abort();
     }
 
@@ -64,14 +64,14 @@ log_variadic( FILE*       file_ptr,
     log_wallclock_cstr( get_millis(), now_cstr );
 
     static const char* const prefixes[] = {
-        ANSI_COLOR_GREEN  "[INFO]   " ANSI_COLOR_RESET
+        ANSI_COLOR_GREEN  "[INFO]   " ANSI_COLOR_RESET,
         ANSI_COLOR_CYAN   "[DEBUG]  " ANSI_COLOR_RESET,
         ANSI_COLOR_BLUE   "[VERBOSE]" ANSI_COLOR_RESET,
         ANSI_COLOR_YELLOW "[WARN]   " ANSI_COLOR_RESET,
         ANSI_COLOR_RED    "[ERROR]  " ANSI_COLOR_RESET
     };
 
-    ENSURE( level < sizeof(prefixes)/sizeof(prefixes[0]), "Provided level (%i) cannot exceed LOG_LEVEL_COUNT %i", level, sizeof(prefixes)/sizeof(prefixes[0]) );
+    ENSURE_ERR( level < LOG_LEVEL_COUNT, "Provided level (%i) cannot exceed LOG_LEVEL_COUNT %i", level, LOG_LEVEL_COUNT );
 
     if( file == NULL || strlen( file ) == 0 ) {
         if( func == NULL || strlen( func ) == 0 ) {
@@ -99,7 +99,7 @@ log_variadic( FILE*       file_ptr,
 void
 log_no_err( FILE*       file_ptr,
             int         close_file,
-            int         level,
+            LOG_LEVEL   level,
             const char* file,
             int         line,
             const char* message_fmt,
@@ -125,9 +125,11 @@ log_err( FILE*       file_ptr,
     va_list args;
     va_start( args, message_fmt );
 
-    log_variadic( file_ptr, close_file, 4, file, line, func, message_fmt, args );
+    log_variadic( file_ptr, close_file, LOG_LEVEL_ERROR, file, line, func, message_fmt, args );
 
     va_end( args );
+
+    fflush( file_ptr );
 
     abort();
 }
