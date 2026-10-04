@@ -76,14 +76,14 @@ compare_log_file( long timestamp )
 
     /* INFO */
     sprintf( expected_line,
-             "%s %s: INFO, %i",
+             "%s %s: INFO , %i",
              prefixes[LOG_LEVEL_INFO],
              now_cstr,
              LOG_LEVEL_INFO );
-    ENSURE_ERR( strcmp( str_buf.items[0].items, expected_line ) == 0,
-                "LOG_INFO does not produce the expected output:\nExpected: %s\nFound: %s",
-                expected_line,
-                str_buf.items[0].items );
+    ENSURE( strcmp( str_buf.items[0].items, expected_line ) == 0,
+            "LOG_INFO does not produce the expected output:\nExpected: %s\nFound: %s",
+            expected_line,
+            str_buf.items[0].items );
 
     /* DEBUG */
     sprintf( expected_line,
@@ -91,20 +91,20 @@ compare_log_file( long timestamp )
              prefixes[LOG_LEVEL_DEBUG],
              now_cstr,
              LOG_LEVEL_DEBUG );
-    ENSURE_ERR( strcmp( str_buf.items[1].items, expected_line ) == 0,
-                "LOG_DEBUG does not produce the expected output:\nExpected: %s\nFound: %s",
-                expected_line,
-                str_buf.items[1].items );
+    ENSURE( strcmp( str_buf.items[1].items, expected_line ) == 0,
+            "LOG_DEBUG does not produce the expected output:\nExpected: %s\nFound: %s",
+            expected_line,
+            str_buf.items[1].items );
 
     /* VERBOSE */
     sprintf( expected_line, "%s %s: VERBOSE, %i",
              prefixes[LOG_LEVEL_VERBOSE],
              now_cstr,
              LOG_LEVEL_VERBOSE );
-    ENSURE_ERR( strcmp( str_buf.items[2].items, expected_line ) == 0,
-                "LOG_VERBOSE does not produce the expected output:\nExpected: %s\nFound: %s",
-                expected_line,
-                str_buf.items[2].items );
+    ENSURE( strcmp( str_buf.items[2].items, expected_line ) == 0,
+            "LOG_VERBOSE does not produce the expected output:\nExpected: %s\nFound: %s",
+            expected_line,
+            str_buf.items[2].items );
 
     /* WARN */
     sprintf( expected_line,
@@ -112,10 +112,10 @@ compare_log_file( long timestamp )
              prefixes[LOG_LEVEL_WARN],
              now_cstr,
              LOG_LEVEL_WARN );
-    ENSURE_ERR( strcmp( str_buf.items[3].items, expected_line ) == 0,
-                "LOG_WARN does not produce the expected output:\nExpected: %s\nFound: %s",
-                expected_line,
-                str_buf.items[3].items );
+    ENSURE( strcmp( str_buf.items[3].items, expected_line ) == 0,
+            "LOG_WARN does not produce the expected output:\nExpected: %s\nFound: %s",
+            expected_line,
+            str_buf.items[3].items );
 
     /* Freeing all the dynamic array allocations */
     for( uint i = 0; i < str_buf.count; i++ ) {
