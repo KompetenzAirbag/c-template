@@ -1,5 +1,6 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -Wall -Wextra -g -fsanitize=address -O0 -fno-omit-frame-pointer
+CFLAGS := -DDEBUG -DVERBOSE
 
 BUILD_DIR := ../build/tests
 
