@@ -6,6 +6,26 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 
+#ifndef ANSI_COLOR_RED
+#ifdef NO_COLOR
+#define ANSI_COLOR_RED
+#define ANSI_COLOR_GREEN
+#define ANSI_COLOR_YELLOW
+#define ANSI_COLOR_BLUE
+#define ANSI_COLOR_MAGENTA
+#define ANSI_COLOR_CYAN
+#define ANSI_COLOR_RESET
+#else
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#endif
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -79,6 +99,11 @@ typedef enum {
 #endif /* NO_WARN */
 
 #define LOG_ERROR( fmt, ... ) do { log_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__ ); } while( 0 )
+
+/* log_wallclock_cstr will fill buf with the provided timestamp in the
+   logging format */
+void
+log_wallclock_cstr( long now, char* buf );
 
 /* log_no_err will log with any level without terminating the program */
 void
