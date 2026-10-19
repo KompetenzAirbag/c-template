@@ -1,5 +1,8 @@
 #pragma once
 
+#include <malloc.h>
+#include <assert.h>
+
 #define DA_INIT_CAP (256UL)
 
 /* da_reserve will reserve space for a dynamic array */
