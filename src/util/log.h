@@ -34,16 +34,20 @@
 /* Logging library
    Provides useful logging tools such as DEBUG, WARN, VERBOSE, ERROR
    Defaults to stdout but can be redirected setting LOG_FILE to any
-   FILE*. Use open_log_file( path ) to open a file directly
+   FILE*. Individual LOG_LEVELs can be redirected by setting the corresponding
+   LOG_FILE_*. Use open_log_file( path ) to open a file directly
    Useful Makefile defines:
      DEBUG    enables  LOG_DEBUG
      VERBOSE  enables  LOG_VERBOSE
      NO_WARN  disables LOG_WARN
      NO_COLOR disables colorful logging */
 
-#define LOG_WALLCLOCK_CSTR_BUF_SZ (40ul)
-
 extern FILE* LOG_FILE;
+extern FILE* LOG_FILE_INFO;
+extern FILE* LOG_FILE_DEBUG;
+extern FILE* LOG_FILE_VERBOSE;
+extern FILE* LOG_FILE_WARN;
+extern FILE* LOG_FILE_ERROR;
 
 typedef enum {
     LOG_LEVEL_INFO = 0,
@@ -53,9 +57,6 @@ typedef enum {
     LOG_LEVEL_ERROR,
     LOG_LEVEL_COUNT
 } LOG_LEVEL;
-
-void
-open_log_file( char* file_path );
 
 /* LOG_WARN("%d is the loneliest number", 1) will print something like:
      [WARN] 09-02-2026 22:15:23.26 src/file.c(102): 1 is the loneliest number
@@ -81,10 +82,17 @@ open_log_file( char* file_path );
 #define LOG_WARN( fmt, ... ) do { log_no_err( LOG_LEVEL_WARN, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
 #else
 #define LOG_WARN( fmt, ... ) do { log_no_err( LOG_LEVEL_WARN, NULL, 0, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
-#endif
+#endif /* DEBUG */
 #endif /* NO_WARN */
 
 #define LOG_ERROR( fmt, ... ) do { log_err( __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__ ); } while( 0 )
+
+#define LOG_WALLCLOCK_CSTR_BUF_SZ (40ul)
+
+/* open_log_file opens a log file from a path. This will overwrite any
+   existing log file with the same name */
+FILE*
+open_log_file( char* file_path );
 
 /* log_wallclock_cstr will fill buf with the provided timestamp in the
    logging format */
@@ -106,4 +114,4 @@ log_err( const char* file,
          const char* func,
          const char* message_fmt,
          ...
-) __attribute__((noreturn)); /* Let compiler know this will not be returning */
+) __attribute__((noreturn));
