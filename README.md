@@ -17,7 +17,7 @@ All targets have their respective `run` operations as well to run the executable
 
 # Included Libraries
 ## Logging
-Logging library with formatted output. Redirect the log to a file (seen in `tests/test_log.c`). By default redirected to stdout. Compiler flags:
+Logging library with formatted output. Redirect the log to a file (seen in `tests/test_log.c`). By default redirected to stdout This can be changed by setting `LOG_FILE` to any `FILE*`. Compiler flags:
 
 ```{bash}
 -DDEBUG defines DEBUG and will enable LOG_DEBUG. This will also enable pinpoint location for LOG_WARN

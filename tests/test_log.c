@@ -21,10 +21,8 @@ typedef struct String_buf
 void
 print_log()
 {
-    #undef LOG_FILE
-    #define LOG_FILE "/tmp/unit_test_log"
-
     remove("/tmp/unit_test_log");
+    open_log_file( "/tmp/unit_test_log");
 
     int counter = 0;
     LOG_INFO(    "INFO, %i",    counter++ );
@@ -32,8 +30,7 @@ print_log()
     LOG_VERBOSE( "VERBOSE, %i", counter++ );
     LOG_WARN(    "WARN, %i",    counter++ );
 
-    #undef LOG_FILE
-    #define LOG_FILE stdout
+    LOG_FILE = stdout;
 }
 
 void
@@ -61,7 +58,7 @@ compare_log_file( long timestamp )
 
     fclose( file );
 
-    char now_cstr[AN_LOG_WALLCLOCK_CSTR_BUF_SZ];
+    char now_cstr[LOG_WALLCLOCK_CSTR_BUF_SZ];
     log_wallclock_cstr( timestamp, now_cstr );
 
     static const char* const prefixes[] = {
@@ -87,7 +84,7 @@ compare_log_file( long timestamp )
 
     /* DEBUG */
     sprintf( expected_line,
-             "%s %s "ANSI_COLOR_GREEN"test_log.c(31): "ANSI_COLOR_RESET"DEBUG, %i",
+             "%s %s "ANSI_COLOR_GREEN"test_log.c(29): "ANSI_COLOR_RESET"DEBUG, %i",
              prefixes[LOG_LEVEL_DEBUG],
              now_cstr,
              LOG_LEVEL_DEBUG );
@@ -108,7 +105,7 @@ compare_log_file( long timestamp )
 
     /* WARN */
     sprintf( expected_line,
-             "%s %s "ANSI_COLOR_GREEN"test_log.c(33): "ANSI_COLOR_RESET"WARN, %i",
+             "%s %s "ANSI_COLOR_GREEN"test_log.c(31): "ANSI_COLOR_RESET"WARN, %i",
              prefixes[LOG_LEVEL_WARN],
              now_cstr,
              LOG_LEVEL_WARN );

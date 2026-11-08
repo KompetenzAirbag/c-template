@@ -33,34 +33,17 @@
 
 /* Logging library
    Provides useful logging tools such as DEBUG, WARN, VERBOSE, ERROR
-   Defaults to stdout but can be redirected by #define "filename" BEFORE
-   including this file
+   Defaults to stdout but can be redirected setting LOG_FILE to any
+   FILE*. Use open_log_file( path ) to open a file directly
    Useful Makefile defines:
      DEBUG    enables  LOG_DEBUG
      VERBOSE  enables  LOG_VERBOSE
      NO_WARN  disables LOG_WARN
      NO_COLOR disables colorful logging */
 
-#ifndef LOG_FILE
-#define LOG_FILE stdout
-#endif
+#define LOG_WALLCLOCK_CSTR_BUF_SZ (40ul)
 
-#define AN_LOG_WALLCLOCK_CSTR_BUF_SZ (40ul)
-
-#define CLOSE_STREAM( x ) \
-    __builtin_choose_expr( \
-        __builtin_types_compatible_p( typeof(x), FILE* ), \
-        0, \
-        1 \
-    )
-
-
-#define LOG_STREAM(x) \
-    __builtin_choose_expr( \
-        __builtin_types_compatible_p( typeof(x), FILE* ), \
-        (FILE*)(x), \
-        fopen( (char*)(x), "a+" ) \
-    )
+extern FILE* LOG_FILE;
 
 typedef enum {
     LOG_LEVEL_INFO = 0,
@@ -71,19 +54,22 @@ typedef enum {
     LOG_LEVEL_COUNT
 } LOG_LEVEL;
 
-/* AN_WARN("%d is the loneliest number", 1) will print something like:
+void
+open_log_file( char* file_path );
+
+/* LOG_WARN("%d is the loneliest number", 1) will print something like:
      [WARN] 09-02-2026 22:15:23.26 src/file.c(102): 1 is the loneliest number
 */
-#define LOG_INFO( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), LOG_LEVEL_INFO, NULL, 0, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_INFO( fmt, ... ) do { log_no_err( LOG_LEVEL_INFO, NULL, 0, fmt, ##__VA_ARGS__ ); } while( 0 )
 
 #ifdef DEBUG
-#define LOG_DEBUG( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_DEBUG( fmt, ... ) do { log_no_err( LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); } while( 0 )
 #else
 #define LOG_DEBUG( fmt, ... ) do {} while( 0 )
 #endif /* DEBUG */
 
 #ifdef VERBOSE
-#define LOG_VERBOSE( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), LOG_LEVEL_VERBOSE, "", 0, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_VERBOSE( fmt, ... ) do { log_no_err( LOG_LEVEL_VERBOSE, "", 0, fmt, ##__VA_ARGS__ ); } while( 0 )
 #else
 #define LOG_VERBOSE( fmt, ... ) do {} while( 0 )
 #endif /* VERBOSE */
@@ -92,13 +78,13 @@ typedef enum {
 #define LOG_WARN( fmt, ... ) do {} while( 0 )
 #else
 #ifdef DEBUG
-#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), LOG_LEVEL_WARN, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
+#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_LEVEL_WARN, __FILE__, __LINE__, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
 #else
-#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), LOG_LEVEL_WARN, NULL, 0, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
+#define LOG_WARN( fmt, ... ) do { log_no_err( LOG_LEVEL_WARN, NULL, 0, fmt, ##__VA_ARGS__ ); fflush( stdout ); } while( 0 )
 #endif
 #endif /* NO_WARN */
 
-#define LOG_ERROR( fmt, ... ) do { log_err( LOG_STREAM( LOG_FILE ), CLOSE_STREAM( LOG_FILE ), __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__ ); } while( 0 )
+#define LOG_ERROR( fmt, ... ) do { log_err( __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__ ); } while( 0 )
 
 /* log_wallclock_cstr will fill buf with the provided timestamp in the
    logging format */
@@ -107,9 +93,7 @@ log_wallclock_cstr( long now, char* buf );
 
 /* log_no_err will log with any level without terminating the program */
 void
-log_no_err( FILE*       file_ptr,
-            int         close_file,
-            LOG_LEVEL   level,
+log_no_err( LOG_LEVEL   level,
             const char* file,
             int         line,
             const char* message_fmt,
@@ -117,9 +101,7 @@ log_no_err( FILE*       file_ptr,
 
 /* log_err will log an error and terminate the program */
 void
-log_err( FILE*       file_ptr,
-         int         close_file,
-         const char* file,
+log_err( const char* file,
          int         line,
          const char* func,
          const char* message_fmt,
